@@ -18,8 +18,8 @@ class MoviesController < ApplicationController
       session["all_ratings_selected"] = params[:ratings]
     end
 
-    if not params[:sort_by].nil?
-      session["sort_by"] = params[:sort_by]
+    if not params[:sort].nil?
+      session["sort"] = params[:sort]
     end
 
     @all_ratings = Movie.uniq.pluck("rating")
@@ -30,16 +30,16 @@ class MoviesController < ApplicationController
     end
 
 
-    if params[:ratings].nil? and params[:sort_by].nil?
+    if params[:ratings].nil? and params[:sort].nil?
       flash.keep
-      redirect_to movies_path({sort_by: session["sort_by"], ratings: session["all_ratings_selected"]})
+      redirect_to movies_path({sort: session["sort"], ratings: session["all_ratings_selected"]})
     end
 
-    if session["sort_by"] == "title"
+    if session["sort"] == "title"
       @movies = Movie.with_ratings_sort(session["selected_ratings"], :title)
       @title_hilite = "hilite"
       @release_date_hilite = nil
-    elsif session["sort_by"] == "release_date"
+    elsif session["sort"] == "release_date"
       @movies = Movie.with_ratings_sort(session["selected_ratings"], :release_date)
       @release_date_hilite = "hilite"
       @title_hilite = nil
