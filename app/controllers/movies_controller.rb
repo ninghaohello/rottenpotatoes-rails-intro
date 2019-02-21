@@ -13,8 +13,6 @@ class MoviesController < ApplicationController
 
 
   def index
-    @all_ratings = Movie.uniq.pluck("rating")
-
     if not params[:ratings].nil?
       session["selected_ratings"] = params[:ratings].keys
       session["all_ratings_selected"] = params[:ratings]
@@ -24,6 +22,7 @@ class MoviesController < ApplicationController
       session["sort_by"] = params[:sort_by]
     end
 
+    @all_ratings = Movie.uniq.pluck("rating")
     if session["selected_ratings"].nil?
       session["selected_ratings"] = @all_ratings
       tmp_arr = Array.new(@all_ratings.size, 1)
@@ -37,11 +36,13 @@ class MoviesController < ApplicationController
     end
 
     if session["sort_by"] == "title"
-      @movies = Movie.with_ratings_sort(session["selected_ratings"], :title)
+      @movies = Movie.where(rating: session["selected_ratings"]).order(:title)
+      #@movies = Movie.with_ratings_sort(session["selected_ratings"], :title)
       @title_hilite = "hilite"
       @release_date_hilite = nil
     elsif session["sort_by"] == "release_date"
-      @movies = Movie.with_ratings_sort(session["selected_ratings"], :release_date)
+      @movies = Movie.where(rating: session["selected_ratings"]).order(:release_date)
+      #@movies = Movie.with_ratings_sort(session["selected_ratings"], :release_date)
       @release_date_hilite = "hilite"
       @title_hilite = nil
     else
