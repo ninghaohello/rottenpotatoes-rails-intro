@@ -13,15 +13,18 @@ class MoviesController < ApplicationController
 
 
   def index
+    # Sort info
     if not params[:sort_by].nil?
       session["sort_by"] = params[:sort_by]
     end
     
+    # Select ratings info
     if not params[:ratings].nil?
       session["select_ratings"] = params[:ratings].keys
       session["select_ratings_backup"] = params[:ratings]
     end
-
+    
+    # Get all unique ratings
     @all_ratings = Movie.uniq.pluck("rating")
     
     if session["select_ratings"].nil?
