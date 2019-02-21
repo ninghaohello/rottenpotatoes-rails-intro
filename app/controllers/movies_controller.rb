@@ -12,14 +12,14 @@ class MoviesController < ApplicationController
 
   def index
     sort = params[:sort] || session[:sort]
-    @movies = Movie.all
-    
-    if params[:sort] == "title"
-        @movies = Movie.order(:"title")
-        @title_hilite = "hilite"
-    elsif params[:sort] == "release_date"
-        @movies = Movie.order(:"release_date")
-        @release_date_hilite = "hilite"
+    #handle sorting and highlight
+    case sort
+    when 'title'
+      key = 'title'
+      @title_header = 'hilite'
+    when 'release_date'
+      key = 'release_date'   
+      @release_date_header = 'hilite' 
     end
     
     #handle ratings
