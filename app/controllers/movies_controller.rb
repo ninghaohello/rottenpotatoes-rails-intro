@@ -12,6 +12,7 @@ class MoviesController < ApplicationController
 
   def index
     sort = params[:sort] || session[:sort]
+    
     #handle sorting and highlight
     case sort
     when 'title'
@@ -21,7 +22,7 @@ class MoviesController < ApplicationController
       key = 'release_date'   
       @release_date_header = 'hilite' 
     end
-    
+
     #handle ratings
     @all_ratings = []
     all_ratings_tuples = Movie.all.select('rating').distinct.to_a
