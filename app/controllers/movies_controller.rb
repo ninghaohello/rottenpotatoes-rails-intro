@@ -12,17 +12,25 @@ class MoviesController < ApplicationController
 
   def index
     sort = params[:sort] || session[:sort]
-    @movies = Movie.all
-    @all_ratings = Movie.get_ratings
     
-    if params[:sort_by] == "title"
-        @movies = Movie.order(:"title")
-        @title_hilite = "hilite"
-    elsif params[:sort_by] == "release_date"
-        @movies = Movie.order(:"release_date")
-        @release_date_hilite = "hilite"
+    #handle sorting and highlight
+    case sort
+    when 'title'
+      key = 'title'
+      @title_header = 'hilite'
+    when 'release_date'
+      key = 'release_date'   
+      @release_date_header = 'hilite' 
     end
+
+    #handle ratings
+    @all_ratings = []
+    all_ratings_tuples = Movie.all.select('rating').distinct.to_a
     
+    all_ratings_tuples.each do |tuple|
+      @all_ratings << tuple.rating
+    end
+      
     @selected_ratings = params[:ratings] || session[:ratings] || {}
 
     if session[:sort] != params[:sort]  #get new parameter
@@ -46,7 +54,6 @@ class MoviesController < ApplicationController
     else
       @movies = Movie.order(key).all
     end
-    
   end
 
   def new
