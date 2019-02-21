@@ -11,6 +11,7 @@ class MoviesController < ApplicationController
   end
 
   def index
+    sort = params[:sort] || session[:sort]
     @movies = Movie.all
     
     if params[:sort_by] == "title"
