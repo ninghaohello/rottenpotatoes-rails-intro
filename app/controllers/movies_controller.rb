@@ -10,8 +10,10 @@ class MoviesController < ApplicationController
     # will render app/views/movies/show.<extension> by default
   end
 
+
+
   def index
-    @all_ratings = Movie.get_all_ratings
+    @all_ratings = Movie.uniq.pluck("rating")
 
     if not params[:ratings].nil?
       session["selected_ratings"] = params[:ratings].keys
@@ -51,6 +53,8 @@ class MoviesController < ApplicationController
     @all_ratings_selected = session["all_ratings_selected"]
     
   end
+
+
 
   def new
     # default: render 'new' template
