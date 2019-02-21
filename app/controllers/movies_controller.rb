@@ -49,7 +49,7 @@ class MoviesController < ApplicationController
       @release_date_hilite = nil
     end
 
-    @all_ratings_selected = session["all_ratings_selected"]
+    @ratings_selected = session["all_ratings_selected"]
     
   end
 
