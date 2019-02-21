@@ -36,11 +36,13 @@ class MoviesController < ApplicationController
     end
 
     if session["sort"] == "title"
-      @movies = Movie.with_ratings_sort(session["selected_ratings"], :title)
+      @movies = Movie.where(rating: session["selected_ratings"]).order(:title)
+      #@movies = Movie.with_ratings_sort(session["selected_ratings"], :title)
       @title_hilite = "hilite"
       @release_date_hilite = nil
     elsif session["sort"] == "release_date"
-      @movies = Movie.with_ratings_sort(session["selected_ratings"], :release_date)
+      @movies = Movie.where(rating: session["selected_ratings"]).order(:release_date)
+      #@movies = Movie.with_ratings_sort(session["selected_ratings"], :release_date)
       @release_date_hilite = "hilite"
       @title_hilite = nil
     else
