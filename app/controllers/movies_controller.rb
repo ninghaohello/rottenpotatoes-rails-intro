@@ -13,17 +13,17 @@ class MoviesController < ApplicationController
 
 
   def index
+    if not params[:sort_by].nil?
+      session["sort_by"] = params[:sort_by]
+    end
+    
     if not params[:ratings].nil?
       session["selected_ratings"] = params[:ratings].keys
       session["all_ratings_selected"] = params[:ratings]
     end
-
-    if not params[:sort_by].nil?
-      session["sort_by"] = params[:sort_by]
-    end
-
-    @all_ratings = Movie.uniq.pluck("rating")
+    
     if session["selected_ratings"].nil?
+      @all_ratings = Movie.uniq.pluck("rating")
       session["selected_ratings"] = @all_ratings
       tmp_arr = Array.new(@all_ratings.size, 1)
       session["all_ratings_selected"] = Hash[@all_ratings.zip(tmp_arr)]
