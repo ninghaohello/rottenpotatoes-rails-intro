@@ -45,7 +45,7 @@ class MoviesController < ApplicationController
       @release_date_hilite = "hilite"
       @title_hilite = nil
     else
-      @movies = Movie.with_ratings(session["select_ratings"])
+      @movies = Movie.where(rating: session["select_ratings"])
       @title_hilite = nil
       @release_date_hilite = nil
     end
