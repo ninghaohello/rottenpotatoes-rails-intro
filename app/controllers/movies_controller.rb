@@ -11,49 +11,81 @@ class MoviesController < ApplicationController
   end
 
   def index
-    sort = params[:sort] || session[:sort]
-    
-    #handle sorting and highlight
-    case sort
-    when 'title'
-      key = 'title'
-      @title_header = 'hilite'
-    when 'release_date'
-      key = 'release_date'   
-      @release_date_header = 'hilite' 
+    @all_ratings = Movie.get_all_ratings
+
+
+
+    if not params[:ratings].nil?
+
+      session["selected_ratings"] = params[:ratings].keys
+
+      session["all_ratings_selected"] = params[:ratings]
+
     end
 
-    #handle ratings
-    @all_ratings = []
-    all_ratings_tuples = Movie.all.select('rating').distinct.to_a
-    
-    all_ratings_tuples.each do |tuple|
-      @all_ratings << tuple.rating
-    end
-      
-    @selected_ratings = params[:ratings] || session[:ratings] || {}
 
-    if session[:sort] != params[:sort]  #get new parameter
-      session[:sort] = params[:sort]   #update session
+
+    if not params[:sort_by].nil?
+
+      session["sort_by"] = params[:sort_by]
+
+    end
+
+
+
+    if session["selected_ratings"].nil?
+
+      session["selected_ratings"] = @all_ratings
+
+      tmp_arr = Array.new(@all_ratings.size, 1)
+
+      session["all_ratings_selected"] = Hash[@all_ratings.zip(tmp_arr)]
+
+    end
+
+
+
+    if params[:ratings].nil? and params[:sort_by].nil?
+
       flash.keep
-      redirect_to :sort=>sort, :ratings=> @selected_ratings and return
+
+      redirect_to movies_path({sort_by: session["sort_by"], ratings: session["all_ratings_selected"]})
+
     end
 
-    if params[:ratings] != session[:ratings] and @selected_ratings != {}
-      #session[:sort] = sort
-      session[:ratings] = @selected_ratings
-      #flash.keep
-      #redirect_to :sort => sort, :ratings => @selected_ratings and return
-    end
-    
-    @selected_ratings_keys = []
-    if @selected_ratings != {}
-      @selected_ratings_keys = @selected_ratings.keys
-      @movies = Movie.where(rating:@selected_ratings_keys).order(key)
-  
+
+
+    if session["sort_by"] == "title"
+
+      @movies = Movie.with_ratings_sort(session["selected_ratings"], :title)
+
+      @title_hilite = "hilite"
+
+      @release_date_hilite = nil
+
+    elsif session["sort_by"] == "release_date"
+
+      @movies = Movie.with_ratings_sort(session["selected_ratings"], :release_date)
+
+      @release_date_hilite = "hilite"
+
+      @title_hilite = nil
+
     else
-      @movies = Movie.order(key).all
+
+      @movies = Movie.with_ratings(session["selected_ratings"])
+
+      @title_hilite = nil
+
+      @release_date_hilite = nil
+
     end
+
+
+
+    
+
+    @all_ratings_selected = session["all_ratings_selected"]
     
   end
 
