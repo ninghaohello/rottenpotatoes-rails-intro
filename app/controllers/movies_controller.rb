@@ -13,8 +13,6 @@ class MoviesController < ApplicationController
 
 
   def index
-    @all_ratings = Movie.uniq.pluck("rating")
-
     if not params[:ratings].nil?
       session["selected_ratings"] = params[:ratings].keys
       session["all_ratings_selected"] = params[:ratings]
@@ -24,6 +22,7 @@ class MoviesController < ApplicationController
       session["sort_by"] = params[:sort_by]
     end
 
+    @all_ratings = Movie.uniq.pluck("rating")
     if session["selected_ratings"].nil?
       session["selected_ratings"] = @all_ratings
       tmp_arr = Array.new(@all_ratings.size, 1)
