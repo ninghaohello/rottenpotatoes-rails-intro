@@ -18,39 +18,39 @@ class MoviesController < ApplicationController
     end
     
     if not params[:ratings].nil?
-      session["selected_ratings"] = params[:ratings].keys
-      session["all_ratings_selected"] = params[:ratings]
+      session["select_ratings"] = params[:ratings].keys
+      session["select_ratings_backup"] = params[:ratings]
     end
 
     @all_ratings = Movie.uniq.pluck("rating")
     
-    if session["selected_ratings"].nil?
-      session["selected_ratings"] = @all_ratings
+    if session["select_ratings"].nil?
+      session["select_ratings"] = @all_ratings
       tmp_arr = Array.new(@all_ratings.size, 1)
-      session["all_ratings_selected"] = Hash[@all_ratings.zip(tmp_arr)]
+      session["selected_ratings_backup"] = Hash[@all_ratings.zip(tmp_arr)]
     end
 
 
     if params[:ratings].nil? and params[:sort_by].nil?
       flash.keep
-      redirect_to movies_path({sort_by: session["sort_by"], ratings: session["all_ratings_selected"]})
+      redirect_to movies_path({sort_by: session["sort_by"], ratings: session["select_ratings_backup"]})
     end
 
     if session["sort_by"] == "title"
-      @movies = Movie.where(rating: session["selected_ratings"]).order(:title)
+      @movies = Movie.where(rating: session["select_ratings"]).order(:title)
       @title_hilite = "hilite"
       @release_date_hilite = nil
     elsif session["sort_by"] == "release_date"
-      @movies = Movie.where(rating: session["selected_ratings"]).order(:release_date)
+      @movies = Movie.where(rating: session["select_ratings"]).order(:release_date)
       @release_date_hilite = "hilite"
       @title_hilite = nil
     else
-      @movies = Movie.with_ratings(session["selected_ratings"])
+      @movies = Movie.with_ratings(session["select_ratings"])
       @title_hilite = nil
       @release_date_hilite = nil
     end
 
-    @ratings_selected = session["all_ratings_selected"]
+    @ratings_selected = session["select_ratings_backup"]
     
   end
 
