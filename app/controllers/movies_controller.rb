@@ -11,18 +11,16 @@ class MoviesController < ApplicationController
   end
 
   def index
-    sort = params[:sort] || session[:sort]
+    @movies = Movie.all
     
-    #handle sorting and highlight
-    case sort
-    when 'title'
-      key = 'title'
-      @title_header = 'hilite'
-    when 'release_date'
-      key = 'release_date'   
-      @release_date_header = 'hilite' 
+    if params[:sort_by] == "title"
+        @movies = Movie.order(:"title")
+        @title_hilite = "hilite"
+    elsif params[:sort_by] == "release_date"
+        @movies = Movie.order(:"release_date")
+        @release_date_hilite = "hilite"
     end
-
+    
     #handle ratings
     @all_ratings = []
     all_ratings_tuples = Movie.all.select('rating').distinct.to_a
@@ -54,6 +52,7 @@ class MoviesController < ApplicationController
     else
       @movies = Movie.order(key).all
     end
+    
   end
 
   def new
